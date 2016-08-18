@@ -7,6 +7,7 @@ resource "aws_vpc" "mod" {
 
 resource "aws_internet_gateway" "mod" {
   vpc_id = "${aws_vpc.mod.id}"
+  tags = "${merge(map("Name", "igw-${var.name}"), var.common_tags)}"
 }
 
 resource "aws_route_table" "public" {
