@@ -16,6 +16,7 @@ Module Input Variables
 - `enable_dns_support` - should be true if you want to use private DNS within the VPC
 - `private_propagating_vgws` - list of VGWs the private route table should propagate
 - `public_propagating_vgws` - list of VGWs the public route table should propagate
+- `common_tags` - map of common tags that you wish to apply to any tagged resources
 
 It's generally preferable to keep `public_subnets`, `private_subnets`, and
 `azs` to lists of the same length.

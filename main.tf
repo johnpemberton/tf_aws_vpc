@@ -2,7 +2,7 @@ resource "aws_vpc" "mod" {
   cidr_block = "${var.cidr}"
   enable_dns_hostnames = "${var.enable_dns_hostnames}"
   enable_dns_support = "${var.enable_dns_support}"
-  tags { Name = "${var.name}" }
+  tags = "${merge(map("Name", "vpc-${var.name}"), var.common_tags)}"
 }
 
 resource "aws_internet_gateway" "mod" {
@@ -12,7 +12,7 @@ resource "aws_internet_gateway" "mod" {
 resource "aws_route_table" "public" {
   vpc_id = "${aws_vpc.mod.id}"
   propagating_vgws = ["${var.public_propagating_vgws}"]
-  tags { Name = "${var.name}-public" }
+  tags = "${merge(map("Name", "route-table-public-${var.name}"), var.common_tags)}"
 }
 
 resource "aws_route" "public_internet_gateway" {
@@ -22,9 +22,10 @@ resource "aws_route" "public_internet_gateway" {
 }
 
 resource "aws_route_table" "private" {
+  count = "${length(var.private_subnets)}"
   vpc_id = "${aws_vpc.mod.id}"
   propagating_vgws = ["${var.private_propagating_vgws}"]
-  tags { Name = "${var.name}-private" }
+  tags = "${merge(map("Name", "route-table-private-${var.name}-${count.index + 1}"), var.common_tags)}"
 }
 
 resource "aws_subnet" "private" {
@@ -32,7 +33,7 @@ resource "aws_subnet" "private" {
   cidr_block = "${var.private_subnets[count.index]}"
   availability_zone = "${var.azs[count.index]}"
   count = "${length(var.private_subnets)}"
-  tags { Name = "${var.name}-private" }
+  tags = "${merge(map("Name", "subnet-private-${var.name}-${count.index + 1}"), var.common_tags)}"
 }
 
 resource "aws_subnet" "public" {
@@ -40,7 +41,7 @@ resource "aws_subnet" "public" {
   cidr_block = "${var.public_subnets[count.index]}"
   availability_zone = "${var.azs[count.index]}"
   count = "${length(var.public_subnets)}"
-  tags { Name = "${var.name}-public" }
+  tags = "${merge(map("Name", "subnet-public-${var.name}-${count.index + 1}"), var.common_tags)}"
 
   map_public_ip_on_launch = true
 }

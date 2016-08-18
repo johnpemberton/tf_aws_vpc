@@ -28,3 +28,9 @@ variable "public_propagating_vgws" {
   description = "A list of VGWs the public route table should propagate."
   default = []
 }
+
+variable "common_tags" {
+  type = "map"
+  default = {}
+  description = "A map of common tags that you which to use to tag any aws resources with"
+}
